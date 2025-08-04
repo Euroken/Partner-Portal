@@ -1,35 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request a Quotation</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 2rem 1rem;
-        }
+    <style>
 
         .form-container {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             max-width: 800px;
-            margin: 0 auto;
+            margin: 48px auto;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            border: 1px solid #012B90;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
         .form-header {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #1563FF 0%, #012B90 100%);
             color: white;
             padding: 2rem;
             text-align: center;
@@ -48,6 +33,7 @@
 
         .form-content {
             padding: 2.5rem;
+            padding-right: 4rem;
         }
 
         .form-group {
@@ -75,7 +61,7 @@
         .input-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 4rem;
         }
 
         input[type="text"],
@@ -105,12 +91,53 @@
             border-color: #9ca3af;
         }
 
+        textarea {
+            resize: vertical;
+        }
+
+        input[type="file"] {
+            font-size: 1rem;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: #ffffff;
+            width: 100%;
+        }
+
+        input[type="file"]:hover {
+            border-color: #9ca3af;
+        }
+
+        input[type="file"]:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
         .input-labels {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 4rem;
             font-size: 0.8rem;
             color: #6b7280;
+            margin-top: 0.5rem;
+        }
+
+        .other-labels {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+
+        #file-label {
+            color: #6b7280;
+            font-size:0.8rem;
             margin-top: 0.5rem;
         }
 
@@ -333,7 +360,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #1563FF 0%, #012B90 100%);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
@@ -396,7 +423,7 @@
         }
 
         .submit-btn {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #1563FF 0%, #012B90 100%);
             color: white;
             border: none;
             padding: 1rem 3rem;
@@ -417,9 +444,36 @@
             transform: translateY(0);
         }
 
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
         .placeholder-text {
             color: #9ca3af;
             font-style: italic;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .success-message {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
         }
 
         @media (max-width: 768px) {
@@ -444,15 +498,16 @@
             }
         }
     </style>
-</head>
-<body>
+
     <div class="form-container">
         <div class="form-header">
             <h2>Request a Quotation</h2>
-            <p>Tell us about your requirements and we'll get back to you</p>
         </div>
 
         <div class="form-content">
+            <div class="error-message" id="error-message"></div>
+            <div class="success-message" id="success-message"></div>
+
             <form id="quotation-form">
                 <!-- End-user name -->
                 <div class="form-group">
@@ -475,13 +530,13 @@
 
                 <!-- End-user company name -->
                 <div class="form-group">
-                    <label for="company">Company name <span class="required">*</span></label>
+                    <label for="company">End-user company name <span class="required">*</span></label>
                     <input type="text" id="company" name="company" placeholder="Enter company name" required>
                 </div>
 
                 <!-- End-user location -->
                 <div class="form-group">
-                    <label for="location">Location <span class="required">*</span></label>
+                    <label for="location">End-user's location <span class="required">*</span></label>
                     <select id="location" name="location" required>
                         <option value="">Select province</option>
                         <option>Eastern Cape</option>
@@ -498,7 +553,7 @@
 
                 <!-- End-user industry -->
                 <div class="form-group">
-                    <label for="industry">Industry <span class="required">*</span></label>
+                    <label for="industry">End-user's industry <span class="required">*</span></label>
                     <select id="industry" name="industry" required>
                         <option value="">Select industry</option>
                         <option>Africa ICT</option>
@@ -534,7 +589,7 @@
 
                 <!-- End-user sector -->
                 <div class="form-group">
-                    <label for="sector">Sector <span class="required">*</span></label>
+                    <label for="sector">End-user's sector <span class="required">*</span></label>
                     <select id="sector" name="sector" required>
                         <option value="">Select sector</option>
                         <option>Private</option>
@@ -544,7 +599,7 @@
 
                 <!-- Products selection -->
                 <div class="form-group">
-                    <label>Products of interest <span class="required">*</span></label>
+                    <label>Potential product(s) <span class="required">*</span></label>
                     <div class="product-selector">
                         <div class="product-dropdown-toggle" id="product-dropdown-toggle">
                             <div class="selected-products" id="selected-products">
@@ -553,6 +608,57 @@
                             <div class="dropdown-arrow" id="dropdown-arrow">▼</div>
                         </div>
                     </div>
+                    <span class="other-labels">Please choose the product(s) of interest</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="request-description">Please provide a description of the customer's request (edition, license type, quantities) <span class="required">*</span></label>
+                    <textarea id="request-description" name="request_description" rows="4" required style="width: 100%; padding: 0.875rem 1rem; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 1rem;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="request-type">Request type <span class="required">*</span></label>
+                    <select id="request-type" name="request_type" required>
+                        <option value="">Select request type</option>
+                        <option value="License renewal">License renewal</option>
+                        <option value="New license">New license</option>
+                        <option value="Upgrade an existing license">Upgrade an existing license</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Required services</label>
+                    <div class="product-checkboxes">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="onsite-implementation" name="required_services" value="Onsite implementation">
+                            <label for="onsite-implementation">Onsite implementation</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="onsite-training" name="required_services" value="Onsite training">
+                            <label for="onsite-training">Onsite training</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="remote-implementation" name="required_services" value="Remote implementation">
+                            <label for="remote-implementation">Remote implementation</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="remote-training" name="required_services" value="Remote training">
+                            <label for="remote-training">Remote training</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="demo-session" name="demo_session">
+                        <label for="demo-session">Does the end-user require a demo session?</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>File upload </label>
+                    <input type="file" id="file-upload" name="uploaded_files" multiple>
+                    <label for="file-upload" id="file-label">Upload any relevant files</label>
                 </div>
 
                 <div class="submit-container">
@@ -586,6 +692,14 @@
     </div>
 
     <script>
+        const user = window.logged_in_user;
+        const reseller_account = user["ID"][0];
+        const reseller_contact = user["Contact ID"];
+
+        console.log("reseller_account:", reseller_account);
+        console.log("reseller_contact:", reseller_contact);
+
+
         const products = [
             "AD360", "ADAudit Plus", "ADManager Plus MSP", "ADManager Plus", "ADSelfService Plus", "Access Manager Plus",
             "AlarmsOne", "Analytics Plus", "AppCreator", "Application Control Plus", "Applications Manager",
@@ -611,9 +725,33 @@
         const clearAll = document.getElementById('clear-all');
         const productSearch = document.getElementById('product-search');
         const selectedCount = document.getElementById('selected-count');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
 
         let selectedProducts = [];
         let filteredProducts = [...products];
+
+        // Utility functions for showing messages
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+            // Scroll to top to show the message
+            document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            // Scroll to top to show the message
+            document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideMessages() {
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+        }
 
         // Initialize product checkboxes
         function renderProducts(productsToRender = products) {
@@ -748,16 +886,76 @@
         updateSelectedProducts();
 
         // Form submission
-        document.getElementById('quotation-form').addEventListener('submit', function(e) {
+        document.getElementById('quotation-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            hideMessages(); // Hide any previous messages
+
             if (selectedProducts.length === 0) {
-                alert('Please select at least one product.');
+                showError('Please select at least one product.');
                 return;
             }
 
-            alert('Form submitted successfully! We\'ll get back to you soon.');
+            const form = e.target;
+            const formData = new FormData(form);
+
+            // Add selected products to formData
+            if (selectedProducts.length > 0) {
+                selectedProducts.forEach(product => {
+                    formData.append('products', product);
+                });
+            } else {
+                // Handle case where no products are selected, though we check above
+                showError('At least one product must be selected.');
+                return;
+            }
+
+            // Get required services
+            const requiredServices = [];
+            document.querySelectorAll('input[name="required_services"]:checked').forEach(checkbox => {
+                requiredServices.push(checkbox.value);
+            });
+            formData.set('required_services', requiredServices.join(', '));
+            
+            // Append file(s)
+            /*
+            const fileInput = document.getElementById('file-upload');
+            for (const file of fileInput.files) {
+                formData.append('uploaded_files', file);
+            }
+                */
+
+            // Append reseller information from the user object
+            formData.append('reseller_account', reseller_account);
+            formData.append('reseller_contact', reseller_contact);
+
+            const submitBtn = form.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch('https://certificateanalyzer-893656151.development.catalystserverless.com/server/request-quotation/api/processQuotation', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showSuccess(result.message);
+                    form.reset();
+                    selectedProducts = [];
+                    updateSelectedProducts();
+                    renderProducts();
+                } else {
+                    showError(result.error || 'An unexpected error occurred.');
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                showError('An error occurred while submitting the form. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Request Quotation';
+            }
         });
     </script>
-</body>
-</html>

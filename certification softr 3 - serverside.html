@@ -1,0 +1,478 @@
+<style>
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #1563FF 0%, #012B90 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .header h1 {
+        font-size: 28px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .form-container {
+        padding: 40px;
+    }
+
+    .upload-area {
+        border: 2px dashed #e1e5e9;
+        border-radius: 12px;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+        margin-bottom: 20px;
+    }
+
+    .upload-area:hover {
+        border-color: #667eea;
+        background: #f0f4ff;
+        transform: translateY(-2px);
+    }
+
+    .upload-area.dragover {
+        border-color: #667eea;
+        background: #f0f4ff;
+        transform: scale(1.02);
+    }
+
+    .upload-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+        background: #667eea;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .upload-area:hover .upload-icon {
+        transform: scale(1.1);
+        background: #5a67d8;
+    }
+
+    .upload-text {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 8px;
+    }
+
+    .upload-subtext {
+        color: #718096;
+        font-size: 14px;
+    }
+
+    .file-info {
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 20px;
+        display: none;
+    }
+
+    .file-info.show {
+        display: block;
+    }
+
+    .file-details {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .file-icon {
+        width: 40px;
+        height: 40px;
+        background: #667eea;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .file-meta {
+        flex-grow: 1;
+    }
+
+    .file-name {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 4px;
+    }
+
+    .file-size {
+        color: #718096;
+        font-size: 14px;
+    }
+
+    .remove-file {
+        background: none;
+        border: none;
+        color: #e53e3e;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+
+    .remove-file:hover {
+        background: #fed7d7;
+    }
+
+    .upload-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #1563FF 0%, #012B90 100%);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .upload-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .upload-btn:disabled {
+        background: #a0aec0;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .status-message {
+        margin-top: 16px;
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 500;
+        display: none;
+    }
+
+    .status-message.success {
+        background: #c6f6d5;
+        color: #22543d;
+        border: 1px solid #9ae6b4;
+    }
+
+    .status-message.error {
+        background: #fed7d7;
+        color: #822727;
+        border: 1px solid #feb2b2;
+    }
+
+    .status-message.loading {
+        background: #bee3f8;
+        color: #2a4365;
+        border: 1px solid #90cdf4;
+    }
+
+    .loading-spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #90cdf4;
+        border-radius: 50%;
+        border-top-color: #2a4365;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 8px;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .results-section {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f7fafc;
+        border-radius: 12px;
+        display: none;
+    }
+
+    .results-section.show {
+        display: block;
+    }
+
+    .results-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .result-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .result-item:last-child {
+        border-bottom: none;
+    }
+
+    .result-label {
+        font-weight: 500;
+        color: #4a5568;
+    }
+
+    .result-value {
+        background: #667eea;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 14px;
+    }
+
+    .result-value.empty {
+        background: #e2e8f0;
+        color: #718096;
+    }
+
+    #fileInput {
+        display: none;
+    }
+</style>
+
+<div class="container">
+    <div class="header">
+        <h1>Certification Upload</h1>
+    </div>
+
+    <div class="form-container">
+        <div class="upload-area" onclick="triggerFileInput()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+            <div class="upload-icon">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                </svg>
+            </div>
+            <div class="upload-text">File Upload</div>
+            <div class="upload-subtext">Drag & drop or click to select a file.</div>
+        </div>
+
+        <div class="file-info" id="fileInfo">
+            <div class="file-details">
+                <div class="file-icon">
+                    <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                    </svg>
+                </div>
+                <div class="file-meta">
+                    <div class="file-name" id="fileName"></div>
+                    <div class="file-size" id="fileSize"></div>
+                </div>
+                <button class="remove-file" onclick="removeFile()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <button class="upload-btn" id="uploadBtn" onclick="uploadCertificate()" disabled>
+            Upload Certificate
+        </button>
+
+        <div class="status-message" id="statusMessage"></div>
+
+        </div>
+</div>
+
+<input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleFileSelect(event)">
+
+<script>
+    // Replace this with your actual serverless function URL
+    const SERVERLESS_FUNCTION_URL = 'https://certificateanalyzer-893656151.development.catalystserverless.com/server/certificate-analyzer/api/processCertificate';
+
+    let selectedFile = null;
+    let contactId = null;
+
+    console.log(window.logged_in_user);
+
+    window.addEventListener('DOMContentLoaded', () => {
+        if (window.logged_in_user) {
+            contactId = window.logged_in_user['Contact ID'];
+            console.log('Contact ID:', contactId);
+        } else {
+            showMessage('error', 'User not logged in. Please log in to continue.');
+        }
+    });
+
+    function triggerFileInput() {
+        document.getElementById('fileInput').click();
+    }
+
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) processFile(file);
+    }
+
+    function handleDrop(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        document.querySelector('.upload-area').classList.remove('dragover');
+        const files = event.dataTransfer.files;
+        if (files.length > 0) processFile(files[0]);
+    }
+
+    function handleDragOver(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        document.querySelector('.upload-area').classList.add('dragover');
+    }
+
+    function handleDragLeave(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        document.querySelector('.upload-area').classList.remove('dragover');
+    }
+
+    function processFile(file) {
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            showMessage('error', 'Invalid file type. Please upload a PDF, JPG, PNG, or WEBP image.');
+            return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+            showMessage('error', 'File size exceeds 10MB limit. Please choose a smaller file.');
+            return;
+        }
+
+        selectedFile = file;
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileSize').textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+        document.getElementById('fileInfo').classList.add('show');
+        document.getElementById('uploadBtn').disabled = false;
+        hideMessage();
+        // document.getElementById('resultsSection').classList.remove('show'); // No longer needed
+    }
+
+    function removeFile() {
+        selectedFile = null;
+        document.getElementById('fileInfo').classList.remove('show');
+        document.getElementById('uploadBtn').disabled = true;
+        document.getElementById('fileInput').value = '';
+        hideMessage();
+        // document.getElementById('resultsSection').classList.remove('show'); // No longer needed
+    }
+
+    async function uploadCertificate() {
+        if (!selectedFile || !contactId) {
+            showMessage('error', 'No file selected or user not logged in. Please ensure both are set.');
+            return;
+        }
+
+        const uploadBtn = document.getElementById('uploadBtn');
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = 'Uploading...';
+        showMessage('loading', 'Uploading...');
+
+        try {
+            // Create FormData for file upload
+            const formData = new FormData();
+            formData.append('certificate', selectedFile);
+            formData.append('contactId', contactId);
+
+            // Send to backend for processing
+            const response = await fetch(SERVERLESS_FUNCTION_URL, {
+                method: 'POST',
+                mode:"cors",
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                // Handle non-2xx responses from the server
+                const errorMessage = result.message || result.error || 'Unknown error occurred during upload.';
+                throw new Error(`Upload failed: ${errorMessage}`);
+            }
+
+            if (result.success) {
+                showMessage('success', 'Certificate uploaded successfully!');
+                console.log('Analysis Results:', result.data); // Log results to console
+            } else {
+                const errorMessage = result.message || 'Certificate processing failed on the server.';
+                throw new Error(`Upload failed: ${errorMessage}`);
+            }
+
+        } catch (error) {
+            console.error('Upload error:', error);
+            showMessage('error', error.message || 'An unexpected error occurred during the upload process. Please try again.');
+        } finally {
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Upload Certificate';
+        }
+    }
+
+    // displayResults and updateResultField functions are no longer needed as per request.
+    /*
+    function displayResults(data) {
+        updateResultField('certificationId', data.certificationId);
+        updateResultField('productName', data.productName);
+        updateResultField('type', data.type);
+        updateResultField('startDate', data.startDate);
+        updateResultField('expiryDate', data.expiryDate);
+        document.getElementById('resultsSection').classList.add('show');
+    }
+
+    function updateResultField(fieldId, value) {
+        const el = document.getElementById(fieldId);
+        if (value && value.trim()) {
+            el.textContent = value;
+            el.classList.remove('empty');
+        } else {
+            el.textContent = 'Not detected';
+            el.classList.add('empty');
+        }
+    }
+    */
+
+    function showMessage(type, message) {
+        const status = document.getElementById('statusMessage');
+        status.className = `status-message ${type}`;
+        status.style.display = 'block';
+
+        if (type === 'loading') {
+            status.innerHTML = `<span class="loading-spinner"></span>${message}`;
+        } else {
+            status.textContent = message;
+        }
+
+        if (type === 'success') {
+            setTimeout(hideMessage, 5000);
+        }
+    }
+
+    function hideMessage() {
+        document.getElementById('statusMessage').style.display = 'none';
+    }
+</script>
