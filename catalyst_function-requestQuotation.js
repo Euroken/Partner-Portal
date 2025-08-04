@@ -287,7 +287,7 @@ async function createZohoLead(accessToken, formData, fileIds = []) {
                 Email: formData.email,
                 
                 // Custom fields - adjust these field names to match your Zoho CRM setup
-                Location: formData.location,
+                Province: formData.location,
                 Industry: formData.industry,
                 Sector: formData.sector,
                 
@@ -309,8 +309,8 @@ async function createZohoLead(accessToken, formData, fileIds = []) {
 				Reseller_Direct: "End User",
 
 				// Lookup Mapping
-				PPI_Reseller_Account: Number(formData.reseller_account),
-				PPI_Reseller_Contact: Number(formData.reseller_contact),
+				PPI_Reseller_Account: formData.reseller_account,
+				PPI_Reseller_Contact: formData.reseller_contact,
                 
                 // Attach files if any were uploaded
                 ...(fileIds.length > 0 && {
