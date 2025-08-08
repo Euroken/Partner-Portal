@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nkemba Technologies - Channel Targets vs Achieved</title>
-  <style>
+<style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       display: flex;
@@ -16,7 +10,79 @@
       background-color: #f8f9fa;
       padding: 20px;
     }
-    
+
+    /* Loading Screen Styles */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1563FF, #012B90);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+
+    .loading-overlay.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-content {
+      text-align: center;
+      color: white;
+    }
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-left: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    .loading-text {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .loading-subtitle {
+      font-size: 16px;
+      opacity: 0.8;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Main dashboard content - initially hidden */
+    .main-content {
+      opacity: 0;
+      transition: opacity 0.5s ease-in;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .main-content.show {
+      opacity: 1;
+    }
+
     .dashboard {
       background: white;
       border-radius: 12px;
@@ -24,68 +90,77 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
       width: 80%;
     }
-    
+
     .target-header {
       text-align: center;
       margin-bottom: 30px;
     }
-    
+
     .target-label {
       font-size: 16px;
-      color: #2196F3;
+      color: black;
       font-weight: 500;
       margin-bottom: 8px;
     }
-    
+
     .target-amount {
       font-size: 48px;
       font-weight: 700;
       color: #2196F3;
       margin: 0;
     }
-    
+
     .discount-cards {
       display: flex;
       gap: 20px;
       margin-bottom: 40px;
       justify-content: center;
     }
-    
+
     .discount-card {
-      background: #f5f5f5;
+      background:  #0d49cd;
       border-radius: 8px;
       padding: 20px;
       text-align: center;
       flex: 1;
-      max-width: 200px;
+      max-width: 320px;
+      position: relative;
+      cursor: pointer;
     }
-    
+
+    .discount-card:first-child {
+      background: #1562fe; 
+    }
+    .discount-card:nth-child {
+      background: #1360fa;
+    }
+
     .discount-label {
       font-size: 14px;
-      color: #2196F3;
+      color: white;
       font-weight: 500;
       margin-bottom: 8px;
     }
-    
+
     .discount-value {
       font-size: 32px;
       font-weight: 700;
-      color: #2196F3;
+      color: white;
       margin: 0;
     }
-    
-  .charts-container {
+
+    .charts-container {
     display: flex;
     gap: 40px;
-    align-items: flex-start; /* Ensures titles align horizontally */
+    align-items: flex-start;
     justify-content: center;
   }
-    
+
     .main-chart-container {
       position: relative;
       flex: 2;
     }
-    
+
     .chart-title {
       text-align: center;
       font-size: 16px;
@@ -93,56 +168,17 @@
       font-weight: 500;
       margin-bottom: 20px;
     }
-    
+
     .chart-wrapper {
       position: relative;
-      width: 400px;
+      width: 600px;
       height: 250px;
       margin: 0 auto;
     }
-    
-  .percentage-chart-container {
-    flex: 1;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
 
-  .larger-percentage-chart {
-    width: 160px;
-    height: 160px;
-    margin: 15px auto;
-    position: relative;
-  }
-    
-    .percentage-title {
-      font-size: 16px;
-      color: black;
-      font-weight: 500;
-      margin-bottom: 20px;
-    }
-    
-    .percentage-chart {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto;
-      position: relative;
-    }
-    
-    .percentage-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 24px;
-      font-weight: 700;
-      color: #2196F3;
-    }
-    
     .center-amount {
       position: absolute;
-      bottom: 5%;
+      bottom: 0;
       left: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
@@ -151,35 +187,43 @@
       color: #2196F3;
       z-index: 10;
     }
-    
+
+    .target-vs-achieved-header {
+      margin-bottom: 30px;
+    }
+
+    .target-vs-achieved-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
     /* Account Manager Contribution Styles */
     .account-manager-header {
-      /*background: #f0f8ff;
-      border: 2px solid #2196F3;
-      border-radius: 8px;*/
       margin-bottom: 60px;
     }
-    
+
     .account-manager-header h2 {
       margin: 0;
       font-size: 18px;
       font-weight: 600;
       color: #333;
     }
-    
+
     .account-manager-container {
       display: flex;
       align-items: center;
       gap: 40px;
     }
-    
+
     .account-manager-chart {
       position: relative;
       width: 300px;
       height: 200px;
       flex: 2;
     }
-    
+
     .account-manager-center {
       position: absolute;
       top: 75%;
@@ -190,18 +234,18 @@
       color: #2196F3;
       z-index: 10;
     }
-    
+
     .account-manager-legend {
       flex: 1;
     }
-    
+
     .legend-title {
       font-size: 14px;
       font-weight: 600;
       color: #333;
       margin-bottom: 15px;
     }
-    
+
     .legend-item {
       display: flex;
       align-items: center;
@@ -209,39 +253,35 @@
       margin-bottom: 10px;
       font-size: 14px;
     }
-    
+
     .legend-item input[type="checkbox"] {
       width: 16px;
       height: 16px;
     }
-    
+
     .legend-color {
       width: 16px;
       height: 16px;
       border-radius: 2px;
     }
-    
+
     .themba-color {
       background-color: #2196F3;
     }
-    
+
     .unknown-color {
       background-color: #666666;
     }
-    
+
     .legend-item label {
       cursor: pointer;
       color: #333;
     }
 
     .history-header {
-      /*background: #f0f8ff;
-      border: 2px solid #2196F3;
-      border-radius: 8px;
-      padding: 15px;*/
       margin-bottom: 60px;
     }
-    
+
     .history-header h2 {
       margin: 0;
       font-size: 18px;
@@ -253,296 +293,662 @@
       padding: 10px 20px;
       box-sizing: border-box;
       display: flex;
-      justify-content: flex-start; /* Aligns content to the left */
+      justify-content: flex-start;
       align-items: center;
-      margin-bottom: 20px; /* Adds some space below the header */
+      margin-bottom: 20px;
     }
 
     .navbar-logo {
-      height: 50px; /* Adjust the height as needed */
-      
+      height: 50px;
+    }
+
+    /* Star animation styles */
+    .star-animation-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    .star {
+        position: absolute;
+        color: #1f60ec;
+        font-size: 1rem;
+        opacity: 0;
+    }
+
+    /* Error message styles */
+    .error-message {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      color: #856404;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: center;
+      font-weight: 500;
     }
   </style>
-</head>
-<body>
-  <div class="header-navbar">
-    <img src="Nkemba.png" alt="Nkemba Technologies" class="navbar-logo">
-  </div>
-  <div class="dashboard">
-    <div class="target-header">
-      <div class="target-label">Target for the Year</div>
-      <div class="target-amount">R 2,000,000.00</div>
-    </div>
-    
-    <div class="discount-cards">
-      <div class="discount-card">
-        <div class="discount-label">Net New Logo Discount</div>
-        <div class="discount-value">12.50%</div>
-      </div>
-      <div class="discount-card">
-        <div class="discount-label">New Business Discount</div>
-        <div class="discount-value">10.00%</div>
-      </div>
-      <div class="discount-card">
-        <div class="discount-label">Renewal Discount</div>
-        <div class="discount-value">5.00%</div>
-      </div>
-    </div>
-    
-    <div class="charts-container">
-      <div class="main-chart-container">
-        <div class="chart-title">New Business Achieved</div>
-        <div class="chart-wrapper">
-          <canvas id="mainChart"></canvas>
-          <div class="center-amount">R 3,073,053.97</div>
-        </div>
-      </div>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
 
-      <div class="percentage-chart-container">
-        <div class="percentage-title">Percentage Achieved</div>
-        <div class="larger-percentage-chart">
-          <canvas id="percentageChart"></canvas>
-          <div class="percentage-text">153.7%</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Account Manager Contribution Dashboard -->
-  <div class="dashboard" style="margin-top: 30px;">
-    <div class="account-manager-header">
-      <h2>Account Manager Contribution</h2>
-    </div>
-    
-    <div class="account-manager-container">
-      <div class="account-manager-chart">
-        <canvas id="accountManagerChart"></canvas>
-        <div class="account-manager-center">R 3.54M</div>
-      </div>
-      
-      <div class="account-manager-legend">
-        <div class="legend-title">Account Manager Name</div>
-        <div class="legend-item">
-          <input type="checkbox" id="themba" checked>
-          <span class="legend-color themba-color"></span>
-          <label for="themba">Themba Nkosi</label>
-        </div>
-        <div class="legend-item">
-          <input type="checkbox" id="unknown" checked>
-          <span class="legend-color unknown-color"></span>
-          <label for="unknown">Unknown</label>
-        </div>
-      </div>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Loading Analytics Dashboard</div>
+      <div class="loading-subtitle">Fetching your data...</div>
     </div>
   </div>
 
-  <!-- History (New Business) -->
-  <div class="dashboard" style="margin-top: 30px;">
-    <div class="history-header">
-      <h2>History (New Business)</h2>
+  <div class="main-content" id="mainContent">
+    <div class="dashboard">
+      <div class="target-vs-achieved-header">
+        <h2>Target VS Achieved</h2>
+        <hr />
+      </div>
+
+      <div class="target-header">
+        <div class="target-label">Target for the Year</div>
+        <div class="target-amount" id="targetAmount">R 0.00</div>
+      </div>
+
+      <div class="discount-cards">
+        <div class="discount-card">
+          <div class="discount-label">Net New Logo Discount</div>
+          <div class="discount-value" id="netNewLogoDiscount">0.00%</div>
+          <div class="star-animation-container"></div>
+        </div>
+        <div class="discount-card">
+          <div class="discount-label">New Business Discount</div>
+          <div class="discount-value" id="newBusinessDiscount">0.00%</div>
+          <div class="star-animation-container"></div>
+        </div>
+        <div class="discount-card">
+          <div class="discount-label">Renewal Discount</div>
+          <div class="discount-value" id="renewalDiscount">0.00%</div>
+          <div class="star-animation-container"></div>
+        </div>
+      </div>
+
+      <div class="charts-container">
+        <div class="main-chart-container">
+          <div class="chart-title">New Business Achieved</div>
+          <div class="chart-wrapper">
+            <canvas id="mainChart"></canvas>
+            <div class="center-amount" id="achievedAmount">R 0.00</div>
+          </div>
+        </div>
+      </div>
     </div>
-    
-    <div class="history-container">
-        <div class="history-chart">
-          <canvas id="historyChart"></canvas>
+
+    <div class="dashboard" style="margin-top: 30px;">
+      <div class="account-manager-header">
+        <h2>Account Manager Contribution</h2>
+        <hr />
+      </div>
+
+      <div class="account-manager-container">
+        <div class="account-manager-chart">
+          <canvas id="accountManagerChart"></canvas>
+          <div class="account-manager-center" id="accountManagerTotal">R 0.00M</div>
+        </div>
+
+        <div class="account-manager-legend" id="accountManagerLegend">
+          <div class="legend-title">Account Manager Name</div>
+          </div>
+      </div>
+    </div>
+
+    <div class="dashboard" style="margin-top: 30px;">
+      <div class="history-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>History (New Business)</h2>
+        <div style="display: flex; gap: 10px;">
+          <button id="toggleChartType" style="padding: 6px 16px; background-color: #1563FF; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer;">
+            Switch to Line Chart
+          </button>
+          <button id="toggleDataLabels" style="padding: 6px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer;">
+            Hide Data Labels
+          </button>
+        </div>
+      </div>
+        
+      <div class="history-container">
+          <div class="history-chart">
+            <canvas id="historyChart"></canvas>
+        </div>
       </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   <script>
+    // Global variables to store fetched data
+    let fetchedData = null;
+    let charts = {};
 
-    const targetAmount = 2000000.00;
-    const achievedAmount = 3073053.97;
-    const percentageAchieved = (achievedAmount / targetAmount * 100).toFixed(1);
-    
-    // Main semi-doughnut chart
-    const ctx1 = document.getElementById('mainChart').getContext('2d');
+    // Color configuration
+    const colors = ["#1563ff", "#1463fe", "#1562fe", "#1360fa", "#145ff8", "#135df4", "#125aed", "#1057e7", "#1053e0", "#0e4ed6", "#0d49cd", "#0943c0", "#063db2", "#0436a5", "#012b90"];
 
-    const gradient1 = ctx1.createLinearGradient(0, 0, 400, 250);
-    gradient1.addColorStop(0, '#1563FF');    
-    gradient1.addColorStop(1, '#012B90'); 
+    /**
+     * Get the representative indices for datasetCount from a fixed-length color array
+     */
+    function getColorIndicesWithSkips(totalColors, datasetCount) {
+      if (datasetCount <= 0 || datasetCount > totalColors) {
+        throw new Error("Invalid dataset count");
+      }
+
+      const baseChunkSize = Math.floor(totalColors / datasetCount);
+      const remainder = totalColors % datasetCount;
+
+      const indices = [];
+      let currentIndex = 0;
+
+      for (let i = 0; i < datasetCount; i++) {
+        let chunkSize = baseChunkSize;
+        if (i < remainder) {
+          chunkSize += 1;
+        }
+
+        const middleIndex = currentIndex + Math.floor(chunkSize / 2);
+        indices.push(middleIndex);
+        currentIndex += chunkSize;
+      }
+
+      return indices;
+    }
+
+    /**
+     * Select representative colors for chart datasets
+     */
+    function getRepresentativeColors(colorsArray, datasetCount) {
+      const indices = getColorIndicesWithSkips(colorsArray.length, datasetCount);
+      return indices.map(index => colorsArray[index]);
+    }
+
+    /**
+     * Parse currency string to number
+     */
+    function parseCurrency(currencyStr) {
+      if (!currencyStr || currencyStr === '') return 0;
+      return parseFloat(currencyStr.replace(/[R,\s]/g, ''));
+    }
+
+    /**
+     * Parse percentage string to number
+     */
+    function parsePercentage(percentStr) {
+      if (!percentStr || percentStr === '') return 0;
+      return parseFloat(percentStr.replace('%', ''));
+    }
+
+    /**
+     * Extract year from date string in format "DD MMM, YYYY HH:MM:SS"
+     */
+    function extractYear(dateStr) {
+      if (!dateStr) return null;
+      const match = dateStr.match(/(\d{4})/);
+      return match ? parseInt(match[1]) : null;
+    }
+
+    /**
+     * Process targets and achieved data
+     */
+    function processTargetsData(targetsData) {
+      const rows = targetsData.response.result.rows;
+      const columns = targetsData.response.result.column_order;
+
+      if (!rows || rows.length === 0) {
+        throw new Error('No targets data found');
+      }
+
+      const row = rows[0]; // Assuming a single row
+
+      return {
+        targetAmount: parseCurrency(row[columns.indexOf("Channel (Targets 2023).Amount")]),
+        nnlDiscount: parsePercentage(row[columns.indexOf("Accounts.NNL Discount %")]),
+        nbDiscount: parsePercentage(row[columns.indexOf("Accounts.NB Discount %")]),
+        renewalDiscount: parsePercentage(row[columns.indexOf("Accounts.Renewal Discount %")]),
+        achievedAmount: parseCurrency(row[columns.indexOf("New Business Won")])
+      };
+    }
+
+    /**
+     * Process reseller data for account manager contribution and history
+     */
+    function processResellerData(resellerData) {
+      const rows = resellerData.response.result.rows;
+      const columns = resellerData.response.result.column_order;
+      const managerContribution = {};
+      const yearlyData = {};
+
+      rows.forEach(row => {
+        const manager = row[columns.indexOf("Reseller Account Manager Name")] || "Unknown";
+        const amountStr = row[columns.indexOf("New Business Amount")];
+        const dateStr = row[columns.indexOf("Closing Date")];
+
+        const amount = parseCurrency(amountStr);
+        const year = extractYear(dateStr);
+
+        // Account Manager Contribution (2025 only)
+        if (year === 2025 && amount > 0) {
+          if (!managerContribution[manager]) {
+            managerContribution[manager] = 0;
+          }
+          managerContribution[manager] += amount;
+        }
+
+        // History data (all years)
+        if (year && amount > 0) {
+          if (!yearlyData[year]) {
+            yearlyData[year] = 0;
+          }
+          yearlyData[year] += amount;
+        }
+      });
+      
+      return { managerContribution, yearlyData };
+    }
+
+    /**
+     * Create pointer plugin for main chart
+     */
+    const pointer = {
+      id: 'pointer',
+      defaults: {
+        percentage: 0,
+        maxAngle: 0
+      },
+      afterDraw(chart, args, opt) {
+        const { ctx } = chart;
+        const data = chart._metasets[0].data[0];
+        const radius = data.outerRadius;
+        const centerX = data.x;
+        const centerY = data.y;
         
-    // For the main chart, we show the full achievement even if it exceeds target
-    const mainChart = new Chart(ctx1, {
-      type: 'doughnut',
-      data: {
-        labels: ['Achieved', 'Remaining'],
-        datasets: [{
-          data: [achievedAmount, Math.max(0, targetAmount - achievedAmount)],
-          backgroundColor: [gradient1, '#e0e0e0'],
-          borderWidth: 0,
-          cutout: '70%'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        circumference: 180,
-        rotation: -90,
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            enabled: false
-          }
-        }
-      }
-    });
-    
-    // Percentage chart (full circle)
-    const ctx2 = document.getElementById('percentageChart').getContext('2d');
+        const percentage = chart.options.plugins.pointer.percentage;
+        const targetAmount = chart.targetAmount || 0;
+        const achievedAmount = chart.achievedAmount || 0;
+        const speed = (targetAmount < achievedAmount) ? (targetAmount / achievedAmount * 100) : 100;
+        const angleRad = Math.PI * (speed / 100) * percentage + Math.PI;
+        const angleDeg = angleRad * (180 / Math.PI);
+        const pointerX = centerX + radius * Math.cos(angleRad);
+        const pointerY = centerY + radius * Math.sin(angleRad);
+        
+        // Draw white pointer
+        ctx.save();
+        ctx.beginPath();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'white';
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(pointerX, pointerY);
+        ctx.stroke();
+        ctx.restore();
 
-    const gradient2 = ctx2.createLinearGradient(0, 0, 120, 120);
-    gradient2.addColorStop(0, '#1563FF');    
-    gradient2.addColorStop(1, '#012B90');
-    
-    const percentageChart = new Chart(ctx2, {
-      type: 'doughnut',
-      data: {
-        labels: ['Achieved', 'Remaining'],
-        datasets: [{
-          data: [percentageAchieved, Math.max(0, 100 - percentageAchieved)],
-          backgroundColor: [gradient2, '#e0e0e0'],
-          borderWidth: 0,
-          cutout: '80%'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            enabled: false
-          }
-        }
-      }
-    });
-    
-    // Account Manager Contribution Chart
-    const ctx3 = document.getElementById('accountManagerChart').getContext('2d');
+        // Draw target label
+        ctx.save();
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 14px sans-serif';
+        let labelX = pointerX;
+        let labelY = pointerY;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
 
-    const gradient3 = ctx2.createLinearGradient(0, 0, 400, 300);
-    gradient3.addColorStop(0, '#1563FF');    
-    gradient3.addColorStop(1, '#012B90');
-    
-    // Data for account manager contribution
-    const thembaAmount = 2193489.11; // 54.20% of 3.07M
-    const unknownAmount = 1345949.36; // 45.80% of 3.07M
-    const totalAmount = thembaAmount + unknownAmount;
-    
-    const accountManagerChart = new Chart(ctx3, {
-      type: 'doughnut',
-      data: {
-        labels: ['Themba Nkosi', 'Unknown'],
-        datasets: [{
-          data: [thembaAmount, unknownAmount],
-          backgroundColor: [gradient3, '#b0b0b0'],
-          borderWidth: 0,
-          cutout: '60%'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        circumference: 180,
-        rotation: -90,
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            enabled: true
-          },
-          datalabels: {
-            color: '#fff',
-            font: {
-              weight: 'bold',
-              size: 14
-            },
-            formatter: (value, context) => {
-              const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-              if (value === 0) return ''; // Skip label if hidden
-              const percentage = (value / total * 100).toFixed(2);
-              return percentage + '%';
-            }
-          }
+        if (angleDeg > 270 && angleDeg <= 360) {
+          labelX += 10;
+          ctx.textAlign = 'left';
+        } else if (angleDeg >= 180 && angleDeg < 271) {
+          labelX -= 10;
+          ctx.textAlign = 'right';
+        } else {
+          labelY -= 60;
+          ctx.textAlign = 'center';
+        }
+        ctx.fillText(`Target: R ${targetAmount.toLocaleString('en-ZA')}`, labelX, labelY);
+        ctx.restore();
+
+        // Draw R0 label
+        ctx.save();
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('R0', centerX - radius - 15, centerY-5);
+        ctx.restore();
+      }
+    };
+
+    /**
+     * Initialize main semi-doughnut chart
+     */
+    function initializeMainChart(targetAmount, achievedAmount) {
+      const ctx1 = document.getElementById('mainChart').getContext('2d');
+      const gradient1 = ctx1.createLinearGradient(0, 0, 400, 250);
+      gradient1.addColorStop(0, '#1563FF');
+      gradient1.addColorStop(1, '#012B90');
+
+      const percentageAchieved = (achievedAmount / targetAmount * 100).toFixed(1);
+
+      charts.mainChart = new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+          labels: ['Achieved', 'Remaining'],
+          datasets: [{
+            data: [achievedAmount, Math.max(0, targetAmount - achievedAmount)],
+            backgroundColor: [gradient1, '#E9E9E9'],
+            hoverBackgroundColor: [gradient1, '#E9E9E9'],
+            borderWidth: 0
+          }]
         },
-      },
-      plugins: [ChartDataLabels]
-    });
-
-    // History Chart
-    const ctx4 = document.getElementById('historyChart').getContext('2d');
-
-    const historyChart = new Chart(ctx4, {
-      type: "bar",
-      options: {
-        plugins: {
-          legend: {
-            display: false,
-          },
-          datalabels: {
-            color: '#fff',
-            font: {
-              weight: 'bold',
-              size: 14
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          rotation: 270,
+          circumference: 180,
+          cutout: '80%',
+          plugins: {
+            tooltip: {
+              enabled: false
             },
-            formatter: (value) => {
-              return `R${value.toLocaleString('en-ZA')}`; // Adds comma/thousand separators
+            legend: {
+              display: false
+            },
+            datalabels: {
+              display: false
+            },
+            pointer: {
+              percentage: 0,
             }
           },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                const value = context.raw;
-                return `R${value.toLocaleString('en-ZA')}`;
-              }
+        },
+        targetAmount,
+        achievedAmount,
+        plugins: [pointer]
+      });
+
+      anime({
+        targets: charts.mainChart.options.plugins.pointer,
+        percentage: 1,
+        easing: 'easeInOutQuad',
+        duration: 1000,
+        update: () => charts.mainChart.update()
+      });
+    }
+
+    /**
+     * Initialize account manager doughnut chart
+     */
+    function initializeAccountManagerChart(managerContribution) {
+        const ctx2 = document.getElementById('accountManagerChart').getContext('2d');
+
+        const labels = Object.keys(managerContribution);
+        const data = Object.values(managerContribution);
+        const backgroundColors = getRepresentativeColors(colors, labels.length);
+        
+        charts.accountManagerChart = new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    hoverBackgroundColor: backgroundColors,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed;
+                                return `${label}: R ${value.toLocaleString('en-ZA')}`;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        color: 'white',
+                        formatter: (value, context) => {
+                            const total = context.dataset.data.reduce((acc, curr) => acc + curr, 0);
+                            const percentage = (value / total * 100).toFixed(1) + '%';
+                            return percentage;
+                        },
+                        font: {
+                          weight: 'bold',
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Dynamically create legend
+        const legendContainer = document.getElementById('accountManagerLegend');
+        const legendTitle = `<div class="legend-title">Account Manager Name</div>`;
+        const legendItemsHtml = labels.map((label, index) => {
+          const color = backgroundColors[index];
+          return `
+            <div class="legend-item">
+              <input type="checkbox" id="am-checkbox-${index}" checked data-label="${label}">
+              <span class="legend-color" style="background-color: ${color};"></span>
+              <label for="am-checkbox-${index}">${label}</label>
+            </div>
+          `;
+        }).join('');
+        legendContainer.innerHTML = legendTitle + legendItemsHtml;
+
+        // Add event listeners for legend checkboxes
+        legendContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+          checkbox.addEventListener('change', (e) => {
+            const chart = charts.accountManagerChart;
+            const label = e.target.dataset.label;
+            const index = chart.data.labels.indexOf(label);
+            if (index !== -1) {
+              chart.setDatasetVisibility(index, e.target.checked);
+              chart.update();
             }
-          }
+          });
+        });
+    }
+
+    /**
+     * Initialize history chart
+     */
+    function initializeHistoryChart(yearlyData) {
+        const ctx3 = document.getElementById('historyChart').getContext('2d');
+        const sortedYears = Object.keys(yearlyData).sort();
+        const data = sortedYears.map(year => yearlyData[year]);
+        const representativeColors = getRepresentativeColors(colors, sortedYears.length);
+
+        charts.historyChart = new Chart(ctx3, {
+            type: 'bar', // Default to bar chart
+            data: {
+                labels: sortedYears,
+                datasets: [{
+                    label: 'New Business Amount',
+                    data: data,
+                    backgroundColor: representativeColors,
+                    hoverBackgroundColor: representativeColors,
+                    barThickness: 50,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              const value = context.parsed.y;
+                              return `R ${value.toLocaleString('en-ZA')}`;
+                          }
+                      }
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: (value) => `R ${value.toLocaleString('en-ZA')}`,
+                        color: 'black',
+                        font: {
+                          weight: 'bold'
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Toggle Chart Type Button
+        document.getElementById('toggleChartType').addEventListener('click', (e) => {
+            if (charts.historyChart.config.type === 'bar') {
+                charts.historyChart.config.type = 'line';
+                charts.historyChart.data.datasets[0].fill = true;
+                e.target.textContent = 'Switch to Bar Chart';
+            } else {
+                charts.historyChart.config.type = 'bar';
+                e.target.textContent = 'Switch to Line Chart';
+            }
+            charts.historyChart.update();
+        });
+
+        // Toggle Data Labels Button
+        document.getElementById('toggleDataLabels').addEventListener('click', (e) => {
+            const datalabelsPlugin = charts.historyChart.options.plugins.datalabels;
+            datalabelsPlugin.display = !datalabelsPlugin.display;
+            e.target.textContent = datalabelsPlugin.display ? 'Hide Data Labels' : 'Show Data Labels';
+            charts.historyChart.update();
+        });
+    }
+    
+    /**
+     * Main function to handle dashboard rendering
+     */
+    function renderDashboard() {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const mainContent = document.getElementById('mainContent');
+
+        try {
+            const targetsAchievedData = fetchedData.targetsAchieved;
+            const resellerData = fetchedData.resellerData;
+
+            // Process data for Targets VS Achieved
+            const targets = processTargetsData(targetsAchievedData);
+            document.getElementById('targetAmount').textContent = `R ${targets.targetAmount.toLocaleString('en-ZA')}`;
+            document.getElementById('netNewLogoDiscount').textContent = `${targets.nnlDiscount.toFixed(2)}%`;
+            document.getElementById('newBusinessDiscount').textContent = `${targets.nbDiscount.toFixed(2)}%`;
+            document.getElementById('renewalDiscount').textContent = `${targets.renewalDiscount.toFixed(2)}%`;
+            document.getElementById('achievedAmount').textContent = `R ${targets.achievedAmount.toLocaleString('en-ZA')}`;
+            initializeMainChart(targets.targetAmount, targets.achievedAmount);
+
+            // Process data for Account Manager and History charts
+            const { managerContribution, yearlyData } = processResellerData(resellerData);
+            const totalContribution = Object.values(managerContribution).reduce((sum, current) => sum + current, 0);
+            document.getElementById('accountManagerTotal').textContent = `R ${Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', notation: 'compact' }).format(totalContribution).replace('ZAR', '').trim()}`;
+            initializeAccountManagerChart(managerContribution);
+            initializeHistoryChart(yearlyData);
+
+            // Hide loading screen and show main content
+            loadingOverlay.classList.add('fade-out');
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                mainContent.classList.add('show');
+            }, 500);
+
+        } catch (error) {
+            console.error('Error processing data or rendering charts:', error);
+            // Hide loading overlay and show a simple error message on the page
+            loadingOverlay.style.display = 'none';
+            document.body.innerHTML += `<div class="error-message">An error occurred while loading the dashboard. Please check the data source.</div>`;
         }
-      },
-      data: {
-        labels: ["2022", "2023", "2024", "2025"],
-        datasets: [{
-          label: false,
-          data: [44951.50, 408137.23, 1363455.09, 3539438.47],
-          backgroundColor: [
-            'rgba(21, 99, 255)',
-            'rgb(31, 34, 196)',
-            'rgb(0, 46, 196)',
-            'rgba(1, 43, 144)'
-          ],
-        }]
-      },
-      plugins: [ChartDataLabels]
-    });
+    }
     
-    // Handle legend checkboxes
-    document.getElementById('themba').addEventListener('change', function() {
-      const dataset = accountManagerChart.data.datasets[0];
-      if (this.checked) {
-        dataset.data[0] = thembaAmount;
-      } else {
-        dataset.data[0] = 0;
+    // Main initialization function
+    async function initializeDashboard() {
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      const mainContent = document.getElementById('mainContent');
+      
+      try {
+        const accId = "3531584000068785003";
+        const accName = "Nkemba Technologies (Pty) Ltd";
+
+        const functionUrl = 'https://certificateanalyzer-893656151.development.catalystserverless.com/server/get-channel/api/fetchAnalyticsData';
+        const urlWithParams = `${functionUrl}?accId=${encodeURIComponent(accId)}&accName=${encodeURIComponent(accName)}`;
+
+        console.log('📡 Fetching data from:', urlWithParams);
+
+        const response = await fetch(urlWithParams, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+
+        console.log('📡 Response status:', response.status);
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(`Server responded with status: ${response.status}. Message: ${errorData.message || 'Unknown error'}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Successfully fetched data:', data);
+
+        if (!data.success) {
+          throw new Error(data.message || 'API returned unsuccessful response');
+        }
+
+        // Store fetched data globally
+        fetchedData = data.data;
+
+        // Update dashboard with fetched data
+        renderDashboard();
+
+        // Initialize star animations after content is shown
+        setTimeout(() => {
+          initializeStarAnimations();
+        }, 1000);
+
+        console.log('🎉 Dashboard initialization completed successfully!');
+
+      } catch (error) {
+        console.error('❌ Error initializing dashboard:', error);
+        
+        // Hide loading screen and show error
+        loadingOverlay.classList.add('fade-out');
+        setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+            mainContent.classList.add('show');
+            showError(`Failed to load dashboard data: ${error.message}`);
+        }, 500);
       }
-      accountManagerChart.update();
-    });
-    
-    document.getElementById('unknown').addEventListener('change', function() {
-      const dataset = accountManagerChart.data.datasets[0];
-      if (this.checked) {
-        dataset.data[1] = unknownAmount;
-      } else {
-        dataset.data[1] = 0;
-      }
-      accountManagerChart.update();
-    });
+    }
+
+    // Run the main function on page load
+    document.addEventListener('DOMContentLoaded', initializeDashboard);
   </script>
-</body>
-</html>
